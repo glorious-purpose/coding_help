@@ -2,7 +2,7 @@ import os
 from openpyxl import load_workbook, Workbook
 
 
-def concat_data(target_dir: str) -> list:
+def concat_data(target_dir: str) -> tuple[list, list[list]]:
     headers = []
     data = []
     for file in os.listdir(target_dir):
@@ -19,7 +19,7 @@ def concat_data(target_dir: str) -> list:
     return headers, data
 
 
-def write_output(target_dir: str, headers: list, data: list) -> None:
+def write_output(target_dir: str, headers: list, data: list[list]) -> None:
     wb = Workbook()
     ws = wb.active
     ws.title = "Concatenated Data"
