@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<!--
+ OP was having issues with javascript function only highlighting top row.
+
+ Issue was with getElementById being used, which only grabs the first instance of an id.
+-->
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <table>
+      <thead>
+        <tr onclick="highlight(this)">
+          <th>Blue 1</th>
+          <th>Blue 2</th>
+          <th>Blue 3</th>
+          <th>Blue 4</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr onclick="highlight(this)">
+          <td>Red 1</td>
+          <td>Red 2</td>
+          <td>Red 3</td>
+          <td>Red 4</td>
+        </tr>
+        <tr onclick="highlight(this)">
+          <td>Green 1</td>
+          <td>Green 2</td>
+          <td>Green 3</td>
+          <td>Green 4</td>
+        </tr>
+        <tr onclick="highlight(this)">
+          <td>Yellow 1</td>
+          <td>Yellow 2</td>
+          <td>Yellow 3</td>
+          <td>Yellow 4</td>
+        </tr>
+        <tr onclick="highlight(this)">
+          <td>Orange 1</td>
+          <td>Orange 2</td>
+          <td>Orange 3</td>
+          <td>Orange 4</td>
+        </tr>
+        <tr onclick="highlight(this)">
+          <td>Purple 1</td>
+          <td>Purple 2</td>
+          <td>Purple 3</td>
+          <td>Purple 4</td>
+        </tr>
+        <tr onclick="highlight(this)">
+          <td>White 1</td>
+          <td>White 2</td>
+          <td>White 3</td>
+          <td>White 4</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <script type="text/javascript">
+      function highlight(element){
+        element.style.color = 'red';
+      }
+    </script>
+  </body>
+</html>
