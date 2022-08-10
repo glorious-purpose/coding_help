@@ -39,10 +39,10 @@ def merge(data_list: list, start: int, middle: int, end: int):
 if __name__ == "__main__":
     from random import randint
 
-    test = [randint(-100000, 100000) for _ in range(10000)]
-    print(test)
-    merge_sort(test)
-    print(test)
+    tests = [[randint(-100000, 100000) for _ in range(randint(50, 10000))] for _ in range(1000)]
+    times = []
+    for test in tests:
+        merge_sort(test)
     i = 0
     j = 1
     while j < len(test):
