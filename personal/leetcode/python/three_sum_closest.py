@@ -87,12 +87,10 @@ class Solution:
 
     def threeSumClosest2(self, nums: list, target: int) -> int:
         counts = {}
-        self.closest = 0
-        self.sdif = 10**4 - -(10**4)
+        self.closest = sum(nums[:3])
+        self.sdif = abs(target - self.closest)
         self.target = target
         nums.sort()
-        closest = sum(nums[:3])
-        diff = abs(target - closest)
         nums_red = []
         for num in nums:
             counts[num] = counts.get(num, 0) + 1
@@ -103,42 +101,45 @@ class Solution:
             if counts[num] < 3:
                 # Reduce iterations by trimming excess list members.
                 nums_red.append(num)
-                if self.compare(nums_red[-3:]):
+                if len(nums_red) >= 3 and self.compare(nums_red[-3:]):
                     return target
 
         # nums_red is sorted, so we can do a binary search to get closest result after <o(n^2)
         for ind, num1 in enumerate(nums_red):
-            for j, num2 in enumerate(nums_red, ind):
+            for j, num2 in enumerate(nums_red[ind + 1 :]):
                 pair = num1 + num2
                 wanted = target - pair
                 # Skip binary search if diff is too big for number to be in list..
+                print(num1, num2, "->", target, wanted)
                 if target < 0 and wanted <= nums_red[0]:
-                    if self.compare([pair, nums_red[0]]):
-                        return target
-                elif target > 0 and wanted >= nums_red[-1]:
-                    if self.compare([pair, nums_red[-1]]):
-                        return target
-                else:
-                    start = 0
-                    end = len(nums_red) - 1
-                    while start <= end:
-                        mid = start + (end - start) // 2
-                        if self.compare([pair, nums_red[mid]]):
+                    continue
+                if target > 0 and wanted >= nums_red[-1]:
+                    continue
+
+                start = 0
+                end = len(nums_red) - 1
+                while start <= end:
+                    mid = start + (end - start) // 2
+                    num3 = nums_red[mid]
+                    if counts[num3] - int(num1 == num3) - int(num2 == num3) > 0:
+                        if self.compare([pair, num3]):
                             return target
-                        if wanted > nums_red[mid]:
-                            start = mid + 1
-                        else:
-                            end = mid - 1
+                    if wanted > num3:
+                        start = mid + 1
+                    else:
+                        end = mid - 1
         return self.closest
 
     def compare(self, triplet: list) -> bool:
         res = sum(triplet)
+        if res == 1:
+            breakpoint()
         dif = abs(self.target - res)
-        if dif == 0:
-            return True
         if dif < self.sdif:
             self.closest = res
             self.sdif = dif
+        if dif == 0:
+            return True
         return False
 
     @staticmethod
@@ -156,8 +157,9 @@ class Solution:
         # max_val = 10
         for _ in range(num_tests):
             if keep_target_close:
-                x = [randint(min_val, max_val) for _ in range(randint(arr_min_length, arr_max_length))]
-                yield x, sum(choices(x, k=3)) + choice([-1500, 1500])
+                yield [1, 1, 1, 0], -100
+                # x = [randint(min_val, max_val) for _ in range(randint(arr_min_length, arr_max_length))]
+                # yield x, sum(choices(x, k=3)) + choice([-1500, 1500])
             else:
                 yield [randint(min_val, max_val) for _ in range(randint(arr_min_length, arr_max_length))], randint(min_tar, max_tar)
 
@@ -167,6 +169,6 @@ if __name__ == "__main__":
     results = []
     for test in s.generate_tests(keep_target_close=True):
         print(test[1], ":\t", sep="", end="", flush=True)
-        print(s.threeSumClosest(test[0], test[1]), "\t", sep="", end="", flush=True)
+        # print(s.threeSumClosest(test[0], test[1]), "\t", sep="", end="", flush=True)
         print(result := s.threeSumClosest2(test[0], test[1]))
         results.append(result)
