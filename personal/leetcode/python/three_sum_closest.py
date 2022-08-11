@@ -33,59 +33,6 @@ from random import randint, choice, choices
 
 class Solution:
     def threeSumClosest(self, nums: list, target: int) -> int:
-        closest_result = None
-        counts = {}
-        singles = set()
-        doubles = set()
-        triples = set()
-        nums.sort()
-        for num in nums:
-            counts[num] = counts.get(num, 0) + 1
-            if counts[num] > 3:
-                continue
-            elif counts[num] == 3:
-                triples.add(num)
-            elif counts[num] == 2:
-                doubles.add(num)
-            else:
-                singles.add(num)
-        singles = sorted(singles)
-        doubles = sorted(doubles)
-        triples = sorted(triples)
-        smallest_diff = 20000
-        for num in triples:
-            res = num * 3
-            dif = abs(target - res)
-            if dif < smallest_diff:
-                smallest_diff = dif
-                closest_result = res
-            elif res > target and dif > smallest_diff:
-                break
-        for num in sorted(doubles):
-            for addend in singles:
-                res = num * 2 + addend
-                dif = abs(target - res)
-                if dif < smallest_diff:
-                    smallest_diff = dif
-                    closest_result = res
-                elif res > target and dif > smallest_diff:
-                    break
-        n = len(singles)
-        for i in range(0, n - 2):
-            for j in range(i + 1, n - 1):
-                pair = singles[i] + singles[j]
-                for k in range(j + 1, n):
-                    res = pair + singles[k]
-                    dif = abs(target - res)
-                    if dif < smallest_diff:
-                        smallest_diff = dif
-                        closest_result = res
-                    elif res > target and dif > smallest_diff:
-                        break
-
-        return closest_result
-
-    def threeSumClosest2(self, nums: list, target: int) -> int:
         counts = {}
         self.closest = sum(nums[:3])
         self.sdif = abs(target - self.closest)
@@ -110,7 +57,52 @@ class Solution:
                 pair = num1 + num2
                 wanted = target - pair
                 # Skip binary search if diff is too big for number to be in list..
-                print(num1, num2, "->", target, wanted)
+                if target < 0 and wanted <= nums_red[0]:
+                    continue
+                if target > 0 and wanted >= nums_red[-1]:
+                    continue
+
+                start = 0
+                end = len(nums_red) - 1
+                while start <= end:
+                    mid = start + (end - start) // 2
+                    num3 = nums_red[mid]
+                    if counts[num3] - int(num1 == num3) - int(num2 == num3) > 0:
+                        if self.compare([pair, num3]):
+                            return target
+                    if wanted > num3:
+                        start = mid + 1
+                    else:
+                        end = mid - 1
+        return self.closest
+
+    def threeSumClosest2(self, nums: list, target: int) -> int:
+        counts = {}
+        self.closest = sum(nums[:3])
+        self.sdif = abs(target - self.closest)
+        self.target = target
+        nums.sort()
+        nums_red = []
+        for num in nums:
+            counts[num] = counts.get(num, 0) + 1
+            if counts[num] == 3:
+                # Process triples here, reducing iterations by # triplets ^2 (or ^3?)
+                if self.compare([num, num, num]):
+                    return target
+            if counts[num] < 3:
+                # Reduce iterations by trimming excess list members.
+                nums_red.append(num)
+                if len(nums_red) >= 3 and self.compare(nums_red[-3:]):
+                    return target
+
+        # nums_red is sorted, so we can do a binary search to get closest result after <o(n^2)
+        for ind, num1 in enumerate(nums_red):
+            if ind == len(nums_red) - 3:
+                break
+            for j, num2 in enumerate(nums_red[ind + 3 :]):
+                pair = num1 + num2
+                wanted = target - pair
+                # Skip binary search if diff is too big for number to be in list..
                 if target < 0 and wanted <= nums_red[0]:
                     continue
                 if target > 0 and wanted >= nums_red[-1]:
@@ -132,8 +124,6 @@ class Solution:
 
     def compare(self, triplet: list) -> bool:
         res = sum(triplet)
-        if res == 1:
-            breakpoint()
         dif = abs(self.target - res)
         if dif < self.sdif:
             self.closest = res
@@ -167,8 +157,8 @@ class Solution:
 if __name__ == "__main__":
     s = Solution()
     results = []
-    for test in s.generate_tests(keep_target_close=True):
+    for test in s.generate_tests(keep_target_close=False):
         print(test[1], ":\t", sep="", end="", flush=True)
-        # print(s.threeSumClosest(test[0], test[1]), "\t", sep="", end="", flush=True)
+        print(s.threeSumClosest(test[0], test[1]), "\t", sep="", end="", flush=True)
         print(result := s.threeSumClosest2(test[0], test[1]))
         results.append(result)
