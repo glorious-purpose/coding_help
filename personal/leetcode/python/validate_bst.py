@@ -25,7 +25,7 @@ Constraints:
     The number of nodes in the tree is in the range [1, 104].
     -231 <= Node.val <= 231 - 1
 """
-from random import randint
+from random import randint, choice
 
 
 class TreeNode:
@@ -77,7 +77,6 @@ class Solution:
                 # Verify right child is larger than self, but smaller than parent.
                 vtc = x.right.val
                 if (len(maxs) > 0 and vtc > maxs[-1]) or vtc < x.val or (len(mins) > 0 and vtc < mins[-1]):
-                    print(f"Mins - {mins}\nMaxs - {maxs}\nVTC - {vtc}\nXVAL - {x.val}")
                     return False
                 # We want to revisit this node after exhausting left nodes on this branch.
                 stack.append(x)
@@ -91,7 +90,6 @@ class Solution:
                 # Verify left child not bigger than self.
                 vtc = x.left.val
                 if (len(mins) > 0 and vtc < mins[-1]) or (len(maxs) > 0 and vtc >= maxs[-1]):
-                    print(mins, maxs, vtc, sep="\n")
                     return False
 
                 # Step into left branch.
@@ -122,18 +120,29 @@ class Solution:
     def generate_tests(num_tests=10):
         num_tests = max(min(num_tests, 1000), 1)
         NODES_MIN = 1
-        # NODES_MAX = 10**4
-        # VAL_MIN = -(2**31)
-        # VAL_MAX = 2**31
-        NODES_MAX = 10
-        VAL_MIN = -(2**7)
-        VAL_MAX = 2**7
+        NODES_MAX = 10**4
+        VAL_MIN = -(2**31)
+        VAL_MAX = 2**31
 
         for _ in range(num_tests):
             x = [randint(VAL_MIN, VAL_MAX) for _ in range(randint(NODES_MIN, NODES_MAX))]
             root = TreeNode(x[0])
             for i in range(1, len(x)):
                 root.add(x[i])
+            x = root
+            if choice([False for _ in range(4)] + [True for _ in range(6)]):
+                while choice([True for _ in range(9)] + [False]):
+                    if x.left is None and x.right is None:
+                        break
+                    options = [x]
+                    if x.left is not None:
+                        options.append(x.left)
+                    if x.right is not None:
+                        options.append(x.right)
+                    x = choice(options)
+                print(x.val, end=" -> ")
+                x.val = randint(VAL_MIN, VAL_MAX)
+                print(x.val)
             yield root
 
 
@@ -141,5 +150,4 @@ if __name__ == "__main__":
     s = Solution()
     test_set = s.generate_tests()
     for test in test_set:
-        print(test)
         print(s.isValidBST(test))
