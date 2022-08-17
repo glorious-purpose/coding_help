@@ -67,10 +67,12 @@ class Solution:
             node = queue.pop(0)
             output[y_pos[node.val]][x_pos[node.val]] = str(node.val)
             if node.left is not None:
-                x_pos[node.left.val] = x_pos[node.val] - 2 ** (height - y_pos[node.val] - 1)
+                print(2 ** (height - y_pos[node.val]))
+                print(height - y_pos[node.val])
+                x_pos[node.left.val] = x_pos[node.val] - 2 ** (height - y_pos[node.val])
                 queue.append(node.left)
             if node.right is not None:
-                x_pos[node.right.val] = x_pos[node.val] + 2 ** (height - y_pos[node.val] - 1)
+                x_pos[node.right.val] = x_pos[node.val] + 2 ** (height - y_pos[node.val])
                 queue.append(node.right)
         return output
 
@@ -94,8 +96,11 @@ class Solution:
 
 if __name__ == "__main__":
     s = Solution()
-    test_set = s.generate_tests()
-    for test in test_set:
-        result = s.printTree(test)
-        for row in result:
-            print(row)
+    # test_set = s.generate_tests(1)
+    # for test in test_set:
+    #     result = s.printTree(test)
+    #     for row in result:
+    #         print(row)
+    result = s.printTree(TreeNode(1, left=TreeNode(1)))
+    for row in result:
+        print(row)
