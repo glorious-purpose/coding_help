@@ -40,7 +40,7 @@ from typing import List
 
 class Solution:
     def searchRange(self, nums: List[int], target: int) -> List[int]:
-        search_queue = [(0, len(nums))]
+        search_queue = [(0, len(nums) - 1)]
         low_index = -1
         high_index = -1
 
@@ -54,9 +54,9 @@ class Solution:
                     low_index = center
                 if high_index == -1 or high_index < center:
                     high_index = center
-            if nums[center] >= target and start <= center - 1:
+            if nums[center] >= target:
                 search_queue.append((start, center - 1))
-            if nums[center] <= target and end >= center + 1:
+            if nums[center] <= target:
                 search_queue.append((center + 1, end))
         return [low_index, high_index]
 
