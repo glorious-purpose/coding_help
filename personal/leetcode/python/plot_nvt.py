@@ -30,7 +30,7 @@ class Plotter:
         return n_value**2 * self.time_unit
 
     def get_2n_time(self, n_value: int):
-        return 2**n_value * self.time_unit
+        return 2 ** min(n_value, 1020) * self.time_unit
 
     def get_nf_time(self, n_value: int):
         n_value = min(n_value, 170)
