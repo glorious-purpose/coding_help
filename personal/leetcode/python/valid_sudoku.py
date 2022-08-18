@@ -65,7 +65,7 @@ class Solution:
             for x_ind, cell in enumerate(row):
                 if cell == "":
                     continue
-                box = (x_ind // 3) + (2 * (y_ind // 3))
+                box = (x_ind // 3) + (3 * (y_ind // 3))
                 if cell in rows[y_ind] + cols[x_ind] + boxs[box]:
                     return False
                 rows[y_ind].append(cell)
