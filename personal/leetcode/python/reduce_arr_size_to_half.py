@@ -31,6 +31,12 @@ Constraints:
     1 <= arr[i] <= 105
 """
 from typing import List
+from random import randint, choice
+
+LEN_MIN = 2
+LEN_MAX = 10**5
+VAL_MIN = 1
+VAL_MAX = 10**5
 
 
 class Solution:
@@ -41,9 +47,41 @@ class Solution:
         removed = 0
         rem_count = 0
         length = len(arr)
-        for num, count in sorted(nums.items(), key=lambda a: a[1], reverse=True):
+        for num, count in sorted(nums.items(), key=lambda a: -(a[1])):
             removed += count
             rem_count += 1
             if length - removed <= length // 2:
                 break
         return rem_count
+
+    def minSetSize2(self, arr: List[int]) -> int:
+        arr.sort()
+        counts = [1]
+        n = arr[0]
+        for num in arr[1:]:
+            if num == n:
+                counts[-1] += 1
+            counts.append(1)
+            n = num
+        counts.sort()
+        n = 0  # Context change to number removed
+        rem_count = 0
+        while rem_count < len(arr) // 2:
+            rem_count += counts.pop()
+            n += 1
+        return n
+
+    @staticmethod
+    def generate_tests(num_tests=10):
+        num_tests = max(min(num_tests, 1000), 1)
+        for _ in range(num_tests):
+            this_length = -1
+            while this_length % 2 != 0:
+                this_length = randint(LEN_MIN, LEN_MAX)
+            this_test = []
+            while len(this_test) < this_length:
+                num_entries = min(choice((1, 1, 1, 1, 1, 2, 2, 3, 4, randint(5, this_length))), this_length - len(this_test))
+                num_val = randint(VAL_MIN, VAL_MAX)
+                this_test.extend([num_val for _ in range(num_entries)])
+            assert len(this_test) == this_length, f"Length isn't valid: {len(this_test)}:{this_length}"
+            yield this_test
