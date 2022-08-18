@@ -54,23 +54,6 @@ class Solution:
                 break
         return rem_count
 
-    def minSetSize2(self, arr: List[int]) -> int:
-        arr.sort()
-        counts = [1]
-        n = arr[0]
-        for num in arr[1:]:
-            if num == n:
-                counts[-1] += 1
-            counts.append(1)
-            n = num
-        counts.sort()
-        n = 0  # Context change to number removed
-        rem_count = 0
-        while rem_count < len(arr) // 2:
-            rem_count += counts.pop()
-            n += 1
-        return n
-
     @staticmethod
     def generate_tests(num_tests=10):
         num_tests = max(min(num_tests, 1000), 1)
