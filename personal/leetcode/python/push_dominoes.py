@@ -37,51 +37,19 @@ from typing import List
 
 class Solution(TestCase):
     def pushDominoes(self, dominoes: str) -> str:
-        l_ptrs = []
-        r_ptrs = []
-        dominoes = list(dominoes)
-        # Populate pointers
-        for idx, char in enumerate(dominoes):
-            if char == "L":
-                l_ptrs.append(idx)
-            elif char == "R":
-                r_ptrs.append(idx)
-        # Move pointers and affect dominoes
-        while len(l_ptrs) > 0 or len(r_ptrs) > 0:
-            # Move pointers
-            pop_r = []
-            pop_l = []
-            for idx in range(len(r_ptrs)):
-                r_ptrs[idx] += 1
-                # Get rid of out of range pointers
-                # and pointers that meet another domino.
-                if (ptr := r_ptrs[idx]) == len(dominoes) or dominoes[ptr] != ".":
-                    pop_r.append(idx)
-            for idx in range(len(l_ptrs)):
-                l_ptrs[idx] -= 1
-                # Get rid of out of range pointers
-                # and pointers that meet another domino.
-                if (ptr := l_ptrs[idx]) == -1 or dominoes[ptr] != ".":
-                    pop_l.append(idx)
-
-            # Remove dead pointers.
-            for ptr_idx in sorted(pop_r, reverse=True):
-                r_ptrs.pop(ptr_idx)
-            for ptr_idx in sorted(pop_l, reverse=True):
-                l_ptrs.pop(ptr_idx)
-
-            # Check for dominoes held up by dominoes on both sides
-            # Remove from ptr lists
-            for ptr in set(r_ptrs).intersection(set(l_ptrs)):
-                r_ptrs.pop(r_ptrs.index(ptr))
-                l_ptrs.pop(l_ptrs.index(ptr))
-
-            # Affect dominoes
-            for ptr in l_ptrs:
-                dominoes[ptr] = "L"
-            for ptr in r_ptrs:
-                dominoes[ptr] = "R"
-        return "".join(dominoes)
+        leaning_dominoes = [(-1, "L")] + [(i, x) for i, x in enumerate(dominoes) if x in "LR"] + [(len(dominoes), "R")]
+        ans = list(dominoes)
+        for (i, x), (j, y) in zip(leaning_dominoes, leaning_dominoes[1:]):
+            if x == y:
+                for k in range(i + 1, j):
+                    ans[k] = x
+            elif x > y:
+                for k in range(i + 1, j):
+                    if k - i < j - k:
+                        ans[k] = "R"
+                    if k - i > j - k:
+                        ans[k] = "L"
+        return "".join(ans)
 
     def solve(self, *args, **kwargs):
         """Common name used for testing solution."""
