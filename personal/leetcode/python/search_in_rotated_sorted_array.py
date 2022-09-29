@@ -43,51 +43,47 @@ from typing import List
 
 
 class Solution(TestCase):
+    tests = (
+        (([4, 5, 6, 7, 0, 1, 2], 0), 4),
+        (([4, 5, 6, 7, 0, 1, 2], 3), -1),
+        (([1], 0), -1),
+        (([1], 1), 0),
+        (([2, 1], 1), 1),
+        (([2, 1], 2), 0),
+        (([1, 2], 1), 0),
+        (([1, 2], 2), 1),
+    )
+
     def search(self, nums: List[int], target: int) -> int:
-        if len(nums) == 1 and nums[0] == target:
-            return 0
-        # Check if array is rotated.
-        # If not, confirm target is in array.
-        if nums[0] < nums[-1] and not nums[0] <= target <= nums[-1]:
-            return -1
+        if len(nums) == 1:
+            return 0 if target == nums[0] else -1
+
         l_ptr = 0
         r_ptr = len(nums) - 1
-        while l_ptr <= r_ptr:
-            m_ptr = l_ptr + (r_ptr - l_ptr) // 2 + (r_ptr - l_ptr) % 2
+
+        while not l_ptr > r_ptr:
+            m_ptr = l_ptr + (r_ptr - l_ptr) // 2
             if nums[m_ptr] == target:
                 return m_ptr
-            if nums[m_ptr] > nums[0]:
-                # Pivot is to the right or there is no Pivot
-                if target < nums[0] or nums[m_ptr] < target:
-                    # Target is past the pivot point or higher than current mid.
-                    # Look in right section.
-                    l_ptr = m_ptr + 1
-                else:
+            if nums[l_ptr] <= nums[m_ptr]:
+                # l_ptr to m_ptr is sorted
+                if nums[l_ptr] <= target < nums[m_ptr]:
                     r_ptr = m_ptr - 1
-
+                else:
+                    l_ptr = m_ptr + 1
             else:
-                # Pivot is to the left.
-                if nums[m_ptr] > target or target > nums[-1]:
-                    r_ptr = m_ptr - 1
-                else:
+                # m_ptr to r_ptr is sorted
+                if nums[m_ptr] < target <= nums[r_ptr]:
                     l_ptr = m_ptr + 1
+                else:
+                    r_ptr = m_ptr - 1
         return -1
 
     def solve(self, *args, **kwargs):
         return self.search(*args, **kwargs)
 
     def test_presets(self):
-        tests = (
-            (([4, 5, 6, 7, 0, 1, 2], 0), 4),
-            (([4, 5, 6, 7, 0, 1, 2], 3), -1),
-            (([1], 0), -1),
-            (([1], 1), 0),
-            (([2, 1], 1), 1),
-            (([2, 1], 2), 0),
-            (([1, 2], 1), 0),
-            (([1, 2], 2), 1),
-        )
-        for test, answer in tests:
+        for test, answer in self.tests:
             results = self.solve(*test)
             self.assertEqual(results, answer, f"{test} -> {answer} != {results}")
 
