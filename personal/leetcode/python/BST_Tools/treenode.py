@@ -65,7 +65,7 @@ class TreeNode:
 
     def __eq__(self, other):
         if isinstance(other, TreeNode):
-            return self.val == other.val
+            return all([self.val == other.val, self.left == other.left, self.right == other.right])
         return self.val == other
 
     def __len__(self):
