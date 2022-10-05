@@ -1,5 +1,8 @@
+from typing import Optional
+
+
 class TreeNode:
-    def __init__(self, val=0, left=None, right=None):
+    def __init__(self, val=None, left=None, right=None):
         self.val = val
         self.left = left
         self.right = right
@@ -16,8 +19,39 @@ class TreeNode:
             else:
                 self.right.add(new_val)
 
+    @classmethod
+    def build(cls, definition: list[int]) -> Optional["TreeNode"]:
+        if len(definition) == 0:
+            return
+        definition = definition[::-1]
+        root = TreeNode(definition.pop())
+        node_map = [[root]]
+        while len(definition) > 0:
+            node_map.append([])
+            for node in node_map[-2]:
+                if node.left is None and (val := definition.pop()) is not None:
+                    node.left = TreeNode(val)
+                    node_map[-1].append(node.left)
+                    if len(definition) == 0:
+                        break
+                if node.right is None and (val := definition.pop()) is not None:
+                    node.right = TreeNode(val)
+                    node_map[-1].append(node.right)
+                    if len(definition) == 0:
+                        break
+        return root
+
     def __str__(self):
-        return f"{self.val} {self.left} {self.right}"
+        queue = [self]
+        output = []
+        while len(queue) > 0:
+            node = queue.pop(0)
+            if node is None:
+                continue
+            output.append(node.val)
+            queue.append(node.left)
+            queue.append(node.right)
+        return str(output)
 
     def __lt__(self, other):
         if isinstance(other, TreeNode):
@@ -40,3 +74,10 @@ class TreeNode:
         if self.left is not None:
             left_len = len(self.left)
         return 1 + right_len + left_len
+
+
+if __name__ == "__main__":
+    test = []
+    t = TreeNode.build(test)
+    # t.build(test)
+    print(t)
