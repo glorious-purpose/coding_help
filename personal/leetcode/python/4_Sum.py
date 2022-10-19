@@ -32,11 +32,37 @@ Constraints:
 
 """
 from unittest import TestCase, main
-from typing import List
 
 
 class Solution(TestCase):
-    def fourSum(self, nums: List[int], target: int) -> List[List[int]]:
+    TESTS = (
+        (([1, 0, -1, 0, -2, 2], 0), [[-2, -1, 1, 2], [-2, 0, 0, 2], [-1, 0, 0, 1]]),
+        (([2, 2, 2, 2, 2], 8), [[2, 2, 2, 2]]),
+        (([-2, -1, -1, 1, 1, 2, 2], 0), [[-2, -1, 1, 2], [-1, -1, 1, 1]]),
+    )
+
+    def fourSum(self, nums: list[int], target: int) -> list[list[int]]:
+        nums.sort()
+        n = len(nums)
+        ans = set()
+        for i in range(n):
+            for j in range(i + 1, n):
+                l, r = j + 1, n - 1
+                remain = target - nums[i] - nums[j]
+                while l < r:
+                    if nums[l] + nums[r] == remain:
+                        ans.add((nums[i], nums[j], nums[l], nums[r]))
+                        l += 1
+                        r -= 1
+                        while l < r and nums[l - 1] == nums[l]:
+                            l += 1
+                    elif nums[l] + nums[r] > remain:
+                        r -= 1
+                    else:
+                        l += 1
+        return list(map(list, ans))
+
+    def adapted_from_combination(self, nums: list[int], target: int) -> list[list[int]]:
         r_nums = []
         count = {}
         for num in nums:
@@ -49,34 +75,48 @@ class Solution(TestCase):
         if len(r_nums) == 4 and sum(r_nums) == target:
             return [sorted(r_nums)]
         if len(r_nums) <= 4:
-            return [[]]
+            return []
 
-        answers = []
+        answers = set()
         for i in range(len(r_nums) - 3):
             for j in range(i + 1, len(r_nums) - 2):
                 for k in range(j + 1, len(r_nums) - 1):
                     for l in range(k + 1, len(r_nums)):
                         iteration = sorted([r_nums[i], r_nums[j], r_nums[k], r_nums[l]])
                         if sum(iteration) == target:
-                            answers.append(iteration)
-        return answers
+                            answers.add(tuple(iteration))
+        return list(map(list, answers))
 
     def solve(self, *args, **kwargs):
         """Common name for easier testing."""
         return self.fourSum(*args, **kwargs)
 
     def test_presets(self):
-        tests = (
-            (([1, 0, -1, 0, -2, 2], 0), [[-2, -1, 1, 2], [-2, 0, 0, 2], [-1, 0, 0, 1]]),
-            (([2, 2, 2, 2, 2], 8), [[2, 2, 2, 2]]),
-        )
-        for test, answer in tests:
+        for test, answer in self.TESTS:
             result = self.solve(*test)
             self.assertIsInstance(result, list)
-            self.assertEqual(len(result), len(answer))
+            self.assertEqual(len(result), len(answer), f"\n{result}\n{answer}")
+            for unique in answer:
+                self.assertIn(unique, result)
+
+    def test_presets_from_combination(self):
+        for test, answer in self.TESTS:
+            result = self.adapted_from_combination(*test)
+            self.assertIsInstance(result, list)
+            self.assertEqual(len(result), len(answer), f"\n{result}\n{answer}")
             for unique in answer:
                 self.assertIn(unique, result)
 
 
 if __name__ == "__main__":
-    main()
+    # main()
+    from timeit import timeit
+
+    num_tests = 10**5
+    t = Solution()
+    time_taken = timeit("t.test_presets()", globals=globals(), number=num_tests)
+    print("Time taken:", time_taken)
+    print("Avg. time:", time_taken / num_tests)
+    time_taken = timeit("t.test_presets_from_combination()", globals=globals(), number=num_tests)
+    print("Time taken:", time_taken)
+    print("Avg. time:", time_taken / num_tests)
