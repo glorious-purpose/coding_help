@@ -60,42 +60,26 @@ class Solution(TestCase):
         balls = list(range(width))
         in_play = list(balls)
 
-        def update(stuck, left, right):
-            rem = []
-            for idx, ball in enumerate(in_play):
-                if balls[ball] in stuck:
+        def stuck(i, x):
+            if x[i] > 0:
+                if i < width - 1 and x[i + 1] == x[i]:
+                    return False
+                return True
+            if i != 0 and x[i - 1] == x[i]:
+                return False
+            return True
+
+        for row in grid:
+            for ball in in_play:
+                if stuck(balls[ball], row):
                     balls[ball] = -1
-                    rem.append(idx)
-                elif balls[ball] in left:
-                    balls[ball] -= 1
-                elif balls[ball] in right:
+                elif row[balls[ball]] > 0:
                     balls[ball] += 1
-            for i in reversed(rem):
-                in_play.pop(i)
-
-        for r_val, row in enumerate(grid):
-            stops = []
-            r_moves = []
-            l_moves = []
-            for idx, cell in enumerate(row):
-                pos = [balls[x] for x in in_play]
-                if idx not in pos:
-                    continue
-                if cell < 0:
-                    # Process left.
-                    if idx == 0 or row[idx - 1] > 0:
-                        stops.append(idx)
-                    else:
-                        l_moves.append(idx)
-
                 else:
-                    # Process right
-                    if idx == width - 1 or row[idx + 1] < 0:
-                        stops.append(idx)
-                    else:
-                        r_moves.append(idx)
-            update(stops, l_moves, r_moves)
-
+                    balls[ball] -= 1
+            for idx in range(len(in_play) - 1, -1, -1):
+                if balls[in_play[idx]] == -1:
+                    in_play.pop(idx)
             if len(in_play) == 0:
                 return balls
 
