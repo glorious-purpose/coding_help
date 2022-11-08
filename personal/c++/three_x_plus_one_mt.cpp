@@ -1,5 +1,3 @@
-// This is currently not working. Still figuring out multithreading.
-
 #include <iostream>
 #include <future>
 #include <deque>
@@ -25,7 +23,7 @@ static int txpone(long num, long orig_num, long v = 0) {
 
 int main() {
   long visited = 0;
-  long numbers_to_eval = 1000;
+  long numbers_to_eval = 1000000;
   long num = 1;
   int thread_count = 8;
   vector<future<int>> threads;
