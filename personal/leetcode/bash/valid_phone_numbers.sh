@@ -14,4 +14,5 @@ done < file.txt
 
 echo "One liner:"
 echo -e
-while read line; do [[ $line =~ ^(\([0-9]{3}\)[[:space:]]|[0-9]{3}-)[0-9]{3}-[0-9]{4}$ ]] && echo $line; done < file.txt
+# while read line; do [[ $line =~ '^(\([0-9]{3}\)[[:space:]]|[0-9]{3}-)[0-9]{3}-[0-9]{4}$ ]] && echo $line; done < file.txt
+awk '/(\([0-9]{3}\)[[:space:]]|[0-9]{3}-)[0-9]{3}-[0-9]{4}$/' file.txt
