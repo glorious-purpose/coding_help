@@ -55,34 +55,18 @@ from unittest import TestCase, main
 
 class Solution(TestCase):
     def find_ball(self, grid: list[list[int]]) -> list[int]:
-        if (width := len(grid[0])) < 2:
-            return [-1 for _ in range(width)]
-        balls = list(range(width))
-        in_play = list(balls)
+        n = len(grid[0])
+        balls = [-1] * (n)
 
-        def stuck(i, x):
-            if x[i] > 0:
-                if i < width - 1 and x[i + 1] == x[i]:
-                    return False
-                return True
-            if i != 0 and x[i - 1] == x[i]:
-                return False
-            return True
-
-        for row in grid:
-            for ball in in_play:
-                if stuck(balls[ball], row):
-                    balls[ball] = -1
-                elif row[balls[ball]] > 0:
-                    balls[ball] += 1
-                else:
-                    balls[ball] -= 1
-            for idx in range(len(in_play) - 1, -1, -1):
-                if balls[in_play[idx]] == -1:
-                    in_play.pop(idx)
-            if len(in_play) == 0:
-                return balls
-
+        for ball in range(n):
+            cpos = ball
+            for row in grid:
+                npos = cpos + row[cpos]
+                if n == npos or npos < 0 or row[npos] != row[cpos]:
+                    break
+                cpos = npos
+            else:
+                balls[ball] = cpos
         return balls
 
     def setUp(self):
