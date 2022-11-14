@@ -51,6 +51,21 @@ class StockSpanner:
         self._pos = 0
 
     def next(self, price: int) -> int:
+        self._pos += 1
+        if len(self._his) == 0 or self._his[-1][0] > price:
+            self._his.append((price, self._pos))
+            return 1
+        else:
+            for idx in range(len(self._his) - 1, -1, -1):
+                entry, pos = self._his[idx]
+                if entry > price:
+                    self._his.append((price, self._pos))
+                    return self._pos - pos
+                self._his.pop()
+            self._his.append((price, self._pos))
+            return self._pos
+
+    def old_next(self, price: int) -> int:
         max_pos = 0
         self._pos += 1
         temp = (price, (cur_pos := self._pos))
